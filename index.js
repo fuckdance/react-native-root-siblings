@@ -27,16 +27,18 @@ class Provider extends Component {
   }
 }
 
-AppRegistry.setWrapperComponentProvider(function() {
-  return function RootSiblingsWrapper(props) {
-    return (
-      <View style={styles.container}>
-        {props.children}
-        <RootSiblings />
-      </View>
-    );
-  };
-});
+if(process.env.RootSiblingManager === undefined) {
+  AppRegistry.setWrapperComponentProvider(function() {
+    return function RootSiblingsWrapper(props) {
+      return (
+        <View style={styles.container}>
+          {props.children}
+          <RootSiblings />
+        </View>
+      );
+    };
+  });
+};
 
 let uuid = 0;
 const triggers = [];
@@ -101,7 +103,7 @@ class RootSiblings extends Component {
   }
 }
 
-export default class RootSiblingManager {
+class RootSiblingManager {
   constructor(element, callback, store) {
     const id = uuid++;
     function update(element, callback, store) {
@@ -121,3 +123,7 @@ export default class RootSiblingManager {
     this.destroy = destroy;
   }
 }
+
+process.env.RootSiblingManager = process.env.RootSiblingManager || RootSiblingManager;
+
+export default process.env.RootSiblingManager 
